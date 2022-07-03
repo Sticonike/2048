@@ -41,6 +41,73 @@ def check_square(x, y, direction):  # pour vérifier si le carré à dépacer es
         return True
 
 
+def move(direction):  # direction : N, S, E, O
+    for i in range(game_difficulty):
+        for j in range(game_difficulty):
+            if grid[i][j] > 0:
+                x = i
+                y = j
+                value = grid[i][j]
+                while check_square(x, y, direction):
+                    grid[x][y] = 0
+                    if direction == "N":
+                        y -= 1
+                    elif direction == "S":
+                        y += 1
+                    elif direction == "E":
+                        x += 1
+                    elif direction == "O":
+                        x -= 1
+                    grid[x][y] = value
+
+    sideways_classification = []
+    if direction == "N":
+        for i in range(4)[::-1]:  # compte à l'envers
+            is_full = True  # part du principe que la ligne est pleine, puis modifie en fonction
+            square_line = []
+            for j in range(4):
+                if grid[i][j] == 0:
+                    square_line.append([j, i])
+                    is_full = False
+            if not is_full:
+                sideways_classification.append(square_line)
+    elif direction == "S":
+        for i in range(4):  # compte à l'endroit
+            is_full = True  # part du principe que la ligne est pleine, puis modifie en fonction
+            square_line = []
+            for j in range(4):
+                if grid[i][j] == 0:
+                    square_line.append([j, i])
+                    is_full = False
+            if not is_full:
+                sideways_classification.append(square_line)
+    elif direction == "E":
+        for i in range(4):  # compte à l'endroit
+            is_full = True  # part du principe que la ligne est pleine, puis modifie en fonction
+            square_line = []
+            for j in range(4):
+                if grid[j][i] == 0:  # i et j sont échangés parce que on bouge horizontalement contrairement à avant
+                    square_line.append([i, j])
+                    is_full = False
+            if not is_full:
+                sideways_classification.append(square_line)
+    elif direction == "O":
+        for i in range(4)[::-1]:  # compte à l'envers
+            is_full = True  # part du principe que la ligne est pleine, puis modifie en fonction
+            square_line = []
+            for j in range(4):
+                if grid[i][j] == 0:  # i et j sont échangés parce que on bouge horizontalement contrairement à avant
+                    square_line.append([i, j])
+                    is_full = False
+            if not is_full:
+                sideways_classification.append(square_line)
+
+    print(sideways_classification)
+
+    random_created_square = random.choice(sideways_classification[0])
+    grid[random_created_square[0]][random_created_square[1]] = 2
+
+
 running = True  # boucle de jeu
 playing = False  # pour recommencer une partie
 while running:
@@ -64,67 +131,19 @@ while running:
                     grid[rand_co[0]][rand_co[1]] = 2
             elif pygame.key.get_pressed()[pygame.K_UP]:
                 if playing:
-                    for i in range(game_difficulty):
-                        for j in range(game_difficulty):
-                            if grid[i][j] > 0:
-                                x = i
-                                y = j
-                                value = grid[i][j]
-                                while check_square(x, y, "N"):
-                                    grid[x][y] = 0
-                                    y -= 1
-                                    grid[x][y] = value
-
-                    sideway_square_classification = []  # classe les carrés libres par "lignes", les plus opposés à la direction choisie
-                    for y in range(3):
-                        sideway_square_classification.append([[x, y] for x in range(3) if grid[x][y] == 0])  # JE SAIS PAS QUOI FAIRE !!!
-                    print(sideway_square_classification)
-
-                    try:
-                        random_added_square_coordinates = random.choice(sideway_square_classification[0])
-                    except IndexError:
-
-                    print(random_added_square_coordinates)
-                    grid[random_added_square_coordinates[0]][random_added_square_coordinates[1]] = 2
+                    move("N")
 
             elif pygame.key.get_pressed()[pygame.K_DOWN]:
                 if playing:
-                    for i in range(game_difficulty):
-                        for j in range(game_difficulty):
-                            if grid[i][j] > 0:
-                                x = i
-                                y = j
-                                value = grid[i][j]
-                                while check_square(x, y, "S"):
-                                    grid[x][y] = 0
-                                    y += 1
-                                    grid[x][y] = value
+                    move("S")
 
             elif pygame.key.get_pressed()[pygame.K_RIGHT]:
                 if playing:
-                    for i in range(game_difficulty):
-                        for j in range(game_difficulty):
-                            if grid[i][j] > 0:
-                                x = i
-                                y = j
-                                value = grid[i][j]
-                                while check_square(x, y, "E"):
-                                    grid[x][y] = 0
-                                    x += 1
-                                    grid[x][y] = value
+                    move("E")
 
             elif pygame.key.get_pressed()[pygame.K_LEFT]:
                 if playing:
-                    for i in range(game_difficulty):
-                        for j in range(game_difficulty):
-                            if grid[i][j] > 0:
-                                x = i
-                                y = j
-                                value = grid[i][j]
-                                while check_square(x, y, "O"):
-                                    grid[x][y] = 0
-                                    x -= 1
-                                    grid[x][y] = value
+                    move("O")
 
             # print(grid)
 
