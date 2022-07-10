@@ -49,15 +49,46 @@ def move(direction):  # direction : N, S, E, O
                 y = j
                 value = grid[i][j]
                 while check_square(x, y, direction):
-                    grid[x][y] = 0
-                    if direction == "N":
-                        y -= 1
+                    if direction == "N":  # demande s'il y a un carré devant avant de le déplacer
+                        if grid[x][y - 1] == 0:  # mouvement
+                            grid[x][y] = 0
+                            y -= 1
+                        elif grid[x][y - 1] == grid[x][y]:  # fusion
+                            value = grid[x][y] * 2
+                            grid[x][y] = 0
+                            y -= 1
+                        else:  # pour quand deux carrés fusionnent pas et que que ça fait une boucle infinie
+                            break
                     elif direction == "S":
-                        y += 1
+                        if grid[x][y + 1] == 0:  # mouvement
+                            grid[x][y] = 0
+                            y += 1
+                        elif grid[x][y + 1] == grid[x][y]:  # fusion
+                            value = grid[x][y] * 2
+                            grid[x][y] = 0
+                            y += 1
+                        else:  # pour quand deux carrés fusionnent pas et que que ça fait une boucle infinie
+                            break
                     elif direction == "E":
-                        x += 1
-                    elif direction == "O":
-                        x -= 1
+                        if grid[x + 1][y] == 0:  # mouvement
+                            grid[x][y] = 0
+                            x += 1
+                        elif grid[x + 1][y] == grid[x][y]:  # fusion
+                            value = grid[x][y] * 2
+                            grid[x][y] = 0
+                            x += 1
+                        else:  # pour quand deux carrés fusionnent pas et que que ça fait une boucle infinie
+                            break
+                    elif direction == "O":  # mouvement
+                        if grid[x - 1][y] == 0:
+                            grid[x][y] = 0
+                            x -= 1
+                        elif grid[x - 1][y] == grid[x][y]:  # fusion
+                            value = grid[x][y] * 2
+                            grid[x][y] = 0
+                            x -= 1
+                        else:  # pour quand deux carrés fusionnent pas et que que ça fait une boucle infinie
+                            break
                     grid[x][y] = value
 
     sideways_classification = []
@@ -101,8 +132,6 @@ def move(direction):  # direction : N, S, E, O
                     is_full = False
             if not is_full:
                 sideways_classification.append(square_line)
-
-    print(sideways_classification)
 
     random_created_square = random.choice(sideways_classification[0])
     grid[random_created_square[0]][random_created_square[1]] = 2
